@@ -1,6 +1,8 @@
 version: "3.8"
 
 services:
+
+  # -------------------- APP SERVICE --------------------
   demo-app:
     build:
       context: ./demo_app
@@ -10,15 +12,26 @@ services:
       - "8001:8001"
     logging:
       driver: "json-file"
-    depends_on:
-      - kafka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    # depends_on:
+      # - kafka
+    restart: unless-stopped
 
+  # -------------------- METRIC MONITORING --------------------
   prometheus:
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - demo-app
+      - node-exporter
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
@@ -30,45 +43,77 @@ services:
       - grafana-storage:/var/lib/grafana
     depends_on:
       - prometheus
-      - elasticsearch
+      # - elasticsearch
+    restart: unless-stopped
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+  alertmanager:
+    image: prom/alertmanager
     ports:
-      - "9200:9200"
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.12.0
+      - "9093:9093"
     volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    depends_on:
-      - kafka
-      - elasticsearch
-
-  kafka:
-    image: bitnami/kafka:3.5
-    ports:
-      - "9092:9092"
+      - ./alertmanager.yml.tmpl:/etc/alertmanager/alertmanager.yml.tmpl
+      - alertmanager-data:/data
     environment:
-      - KAFKA_BROKER_ID=1
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-    depends_on:
-      - zookeeper
+      - SMTP_FROM=chanagun.vir.work@gmail.com
+      - SMTP_USERNAME=chanagun.vir.work@gmail.com
+      - SMTP_PASSWORD="insx cwiq bwkh jelz"
+      - SMTP_TO=chanagun.vir.work@gmail.com
+    command: >
+      sh -c "envsubst < /etc/alertmanager/alertmanager.yml.tmpl > /etc/alertmanager/alertmanager.yml &&
+             /bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/data"
+    restart: unless-stopped
 
-  zookeeper:
-    image: bitnami/zookeeper:latest
+  node-exporter:
+    image: prom/node-exporter:latest
     ports:
-      - "2181:2181"
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      - "9100:9100"
+    container_name: node-exporter
+    restart: unless-stopped
+
+  # # -------------------- LOG STACK --------------------
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.6
+  #   environment:
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #     - ES_JAVA_OPTS=-Xms512m -Xmx512m
+  #   ports:
+  #     - "9200:9200"
+  #   restart: unless-stopped
+
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:8.12.0
+  #   volumes:
+  #     - ./logstack/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  #   depends_on:
+  #     - kafka
+  #     - elasticsearch
+  #   restart: unless-stopped
+
+  # # -------------------- EVENT MESH --------------------
+  # kafka:
+  #   image: bitnami/kafka:3.5
+  #   ports:
+  #     - "9092:9092"
+  #   environment:
+  #     - KAFKA_BROKER_ID=1
+  #     - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+  #     - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+  #     - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+  #     - ALLOW_PLAINTEXT_LISTENER=yes
+  #     - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+  #   depends_on:
+  #     - zookeeper
+  #   restart: unless-stopped
+
+  # zookeeper:
+  #   image: bitnami/zookeeper:latest
+  #   ports:
+  #     - "2181:2181"
+  #   environment:
+  #     - ALLOW_ANONYMOUS_LOGIN=yes
+  #   restart: unless-stopped
 
 volumes:
   grafana-storage:
+  alertmanager-data:

@@ -1,0 +1,29 @@
+groups:
+  - name: SystemAlerts
+    rules:
+      - alert: HighCPUUsage
+        expr: rate(node_cpu_seconds_total{mode="user"}[1m]) > 0.8
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU usage > 80%"
+          description: "CPU usage on {{ $labels.instance }} has been over 80% for 1 minute."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.85
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Memory usage > 85%"
+          description: "Memory usage on {{ $labels.instance }} exceeded 85%."
+
+      - alert: DiskAlmostFull
+        expr: (node_filesystem_size_bytes{fstype!="tmpfs"} - node_filesystem_free_bytes{fstype!="tmpfs"}) / node_filesystem_size_bytes{fstype!="tmpfs"} > 0.9
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk usage > 90%"
+          description: "Disk usage on {{ $labels.instance }} exceeded 90%."
