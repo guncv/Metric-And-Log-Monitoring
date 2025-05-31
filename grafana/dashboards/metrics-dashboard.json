@@ -4,7 +4,7 @@
     "id": null,
     "uid": null,
     "title": "Metrics Dashboard",
-   "timezone": "Asia/Bangkok",
+    "timezone": "Asia/Bangkok",
     "schemaVersion": 36,
     "version": 1,
     "refresh": "10s",
@@ -13,9 +13,21 @@
         "type": "timeseries",
         "title": "Server Requests",
         "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "fillOpacity": 20,
+              "lineWidth": 2,
+              "spanNulls": true
+            }
+          }
+        },
+        "options": {
+          "legend": { "displayMode": "list", "placement": "bottom" }
+        },
         "targets": [
           {
-            "expr": "rate(demo_requests_total[1m])",
+            "expr": "rate(http_requests_total[1m])",
             "legendFormat": "{{instance}}",
             "refId": "A"
           }
@@ -25,6 +37,15 @@
         "type": "timeseries",
         "title": "Memory / CPU",
         "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "fillOpacity": 15,
+              "lineWidth": 2,
+              "spanNulls": true
+            }
+          }
+        },
         "targets": [
           {
             "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)",
@@ -42,6 +63,14 @@
         "type": "timeseries",
         "title": "API Response Rate (2xx / 4xx / 5xx)",
         "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "fillOpacity": 15,
+              "lineWidth": 2
+            }
+          }
+        },
         "targets": [
           {
             "expr": "rate(http_requests_total{status=~\"2..\"}[1m])",
@@ -59,11 +88,19 @@
             "refId": "C"
           }
         ]
-      },       
+      },      
       {
         "type": "timeseries",
         "title": "API Latency (p95)",
         "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "custom": {
+              "lineWidth": 2
+            }
+          }
+        },
         "targets": [
           {
             "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[1m])) by (le))",
@@ -71,25 +108,33 @@
             "refId": "A"
           }
         ]
-      }
-      ,
+      },
       {
         "type": "timeseries",
         "title": "Traffic In/Out",
         "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "custom": {
+              "fillOpacity": 25,
+              "lineWidth": 2
+            }
+          }
+        },
         "targets": [
           {
-            "expr": "rate(node_network_receive_bytes_total[1m])",
-            "legendFormat": "in",
+            "expr": "label_replace(sum by(instance) (rate(node_network_receive_bytes_total{device!~\"lo|docker.*|veth.*\"}[1m])), \"custom_instance\", \"$1\", \"instance\", \"(demo-app-[^-]+)\")",
+            "legendFormat": "Receive {{custom_instance}}",
             "refId": "A"
           },
           {
-            "expr": "rate(node_network_transmit_bytes_total[1m])",
-            "legendFormat": "out",
+            "expr": "label_replace(sum by(instance) (rate(node_network_transmit_bytes_total{device!~\"lo|docker.*|veth.*\"}[1m])), \"custom_instance\", \"$1\", \"instance\", \"(demo-app-[^-]+)\")",
+            "legendFormat": "Transmit {{custom_instance}}",
             "refId": "B"
           }
         ]
-      }
+      }      
     ]
   }
   
