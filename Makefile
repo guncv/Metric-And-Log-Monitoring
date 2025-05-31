@@ -16,7 +16,7 @@ restart:
 	$(DC) restart
 
 rebuild:
-	make clean
+	$(DC) down -v --rmi all
 	make run
 
 ps: 

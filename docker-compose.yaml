@@ -3,10 +3,10 @@ version: "3.8"
 services:
 
   # -------------------- APP SERVICE --------------------
-  demo-app:
+  demo-app-first:
     build:
       context: ./demo_app
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.first
     ports:
       - "5001:5001"
       - "8001:8001"
@@ -21,15 +21,50 @@ services:
       # - kafka
     restart: unless-stopped
 
+  demo-app-second:
+    build:
+      context: ./demo_app
+      dockerfile: Dockerfile.second
+    ports:
+      - "5002:5002"
+      - "8002:8002"
+    logging:
+      driver: "json-file"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  demo-app-third:
+    build:
+      context: ./demo_app
+      dockerfile: Dockerfile.third
+    ports:
+      - "5003:5003"
+      - "8003:8003"
+    logging:
+      driver: "json-file"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
   # -------------------- METRIC MONITORING --------------------
   prometheus:
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics/alert.rules.yml:/etc/prometheus/alert.rules.yml
     depends_on:
-      - demo-app
+      - demo-app-first
+      - demo-app-second
+      - demo-app-third
       - node-exporter
     restart: unless-stopped
 
@@ -38,7 +73,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
     volumes:
       - grafana-storage:/var/lib/grafana
     depends_on:
@@ -51,16 +87,13 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - ./alertmanager.yml.tmpl:/etc/alertmanager/alertmanager.yml.tmpl
+      - ./metrics/alertmanager.yml:/etc/alertmanager/alertmanager.yml
       - alertmanager-data:/data
     environment:
       - SMTP_FROM=chanagun.vir.work@gmail.com
       - SMTP_USERNAME=chanagun.vir.work@gmail.com
       - SMTP_PASSWORD="insx cwiq bwkh jelz"
       - SMTP_TO=chanagun.vir.work@gmail.com
-    command: >
-      sh -c "envsubst < /etc/alertmanager/alertmanager.yml.tmpl > /etc/alertmanager/alertmanager.yml &&
-             /bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml --storage.path=/data"
     restart: unless-stopped
 
   node-exporter:

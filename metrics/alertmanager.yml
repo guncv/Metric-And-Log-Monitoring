@@ -32,7 +32,8 @@ receivers:
     email_configs:
       - to: '${SMTP_TO}'
         send_resolved: true
-        subject: "[DEFAULT] {{ .CommonLabels.alertname }} ({{ .Status }})"
+        headers:
+          Subject: "[DEFAULT] {{ .CommonLabels.alertname }} ({{ .Status }})"
         html: |
           <b>{{ .CommonLabels.alertname }}</b><br>
           Severity: {{ .CommonLabels.severity }}<br>
@@ -44,7 +45,8 @@ receivers:
     email_configs:
       - to: '${SMTP_TO}'
         send_resolved: true
-        subject: "[CRITICAL] {{ .CommonLabels.alertname }} ({{ .Status }})"
+        headers:
+          Subject: "[CRITICAL] {{ .CommonLabels.alertname }} ({{ .Status }})"
         html: |
           <b>Critical Alert</b><br>
           Summary: {{ .CommonAnnotations.summary }}<br>
@@ -55,12 +57,14 @@ receivers:
     email_configs:
       - to: '${SMTP_TO}'
         send_resolved: true
-        subject: "[WARNING] {{ .CommonLabels.alertname }} ({{ .Status }})"
+        headers:
+          Subject: "[WARNING] {{ .CommonLabels.alertname }} ({{ .Status }})"
         html: |
           <b>Warning Alert</b><br>
           Summary: {{ .CommonAnnotations.summary }}<br>
           Description: {{ .CommonAnnotations.description }}<br>
           Instance: {{ .CommonLabels.instance }}
+  
 
 inhibit_rules:
   - source_match:

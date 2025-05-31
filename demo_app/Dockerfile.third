@@ -5,8 +5,8 @@ WORKDIR /app
 COPY package.txt .
 RUN pip install --no-cache-dir -r package.txt
 
-COPY app.py .
+COPY third_api.py .
 
-EXPOSE 5001 8001
+EXPOSE 5003 8003
 
-CMD ["python", "app.py"]
+CMD ["python", "third_api.py"]

@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY package.txt .
+RUN pip install --no-cache-dir -r package.txt
+
+COPY second_api.py .
+
+EXPOSE 5002 8002
+
+CMD ["python", "second_api.py"]

@@ -1,6 +1,6 @@
 global:
-  scrape_interval: 5s      
-  evaluation_interval: 5s 
+  scrape_interval: 15s
+  evaluation_interval: 15s
   scrape_timeout: 10s
 
   external_labels:
@@ -19,10 +19,26 @@ scrape_configs:
     static_configs:
       - targets: ['prometheus:9090']
 
-  - job_name: 'demo-app'
+  - job_name: 'demo-app-first'
     metrics_path: /metrics
     static_configs:
-      - targets: ['demo-app:8001']
+      - targets: ['demo-app-first:8001']
+        labels:
+          service: flask-api
+          group: demo-services
+
+  - job_name: 'demo-app-second'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['demo-app-second:8002']
+        labels:
+          service: flask-api
+          group: demo-services
+
+  - job_name: 'demo-app-third'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['demo-app-third:8003']
         labels:
           service: flask-api
           group: demo-services
