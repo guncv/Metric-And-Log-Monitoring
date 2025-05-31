@@ -75,12 +75,15 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
       - grafana-storage:/var/lib/grafana
-    depends_on:
-      - prometheus
-      # - elasticsearch
     restart: unless-stopped
+
+
 
   alertmanager:
     image: prom/alertmanager
