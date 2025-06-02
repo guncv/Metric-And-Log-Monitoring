@@ -6,49 +6,6 @@ A real-time observability stack for structured logs and metri across **multiple 
 
 ## 🧭 Overview Diagram
 
-```mermaid
-graph TD
-    subgraph API Servers
-        A1[demon-app-first:5001] --> FBit1
-        A2[demon-app-second:5002] --> FBit2
-        A3[demon-app-third:5003] --> FBit3
-    end
-
-    subgraph Fluent Bit (Log Collector)
-        FBit1[Forward Input 24224] --> ES1
-        FBit2[Forward Input 24225] --> ES2
-        FBit3[Forward Input 24226] --> ES3
-    end
-
-    subgraph Elasticsearch
-        ES1[api-server-1-logs-*]
-        ES2[api-server-2-logs-*]
-        ES3[api-server-3-logs-*]
-    end
-
-    subgraph Kibana
-        KB1[Kibana Index Patterns] --> KBUI[Kibana UI]
-        ES1 --> KB1
-        ES2 --> KB1
-        ES3 --> KB1
-    end
-
-    subgraph Prometheus
-        A1 --> PM
-        A2 --> PM
-        A3 --> PM
-        PM --> AlertManager
-        PM --> Grafana
-    end
-
-    AlertManager -->|Email| EmailSys
-    subgraph Grafana
-        GF[Dashboards]
-    end
-
-    PM --> GF
-```
-
 ---
 
 ## 🔧 Components
@@ -106,14 +63,19 @@ graph TD
 
 ```bash
 git clone <this-repo>
+```
+
+```
 make rebuild  # removes & rebuilds entire monitoring stack
 ```
 
 You’ll get:
 
 * Live structured logs per app in Kibana
-* Real-time alerts by email
+![image](https://github.com/user-attachments/assets/9320956b-1a9c-41d8-b482-c997846f52e1)
+
 * Multi-app metric dashboards in Grafana
+![image](https://github.com/user-attachments/assets/4798ff32-6119-4fce-8cca-5f991638c85e)
 
 ---
 
