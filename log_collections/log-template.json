@@ -1,23 +1,22 @@
 {
-    "index_patterns": ["api-logs-*"],
-    "template": {
-      "settings": {
-        "number_of_shards": 1,
-        "number_of_replicas": 0
-      },
-      "mappings": {
-        "properties": {
-          "@timestamp": { "type": "date" },
-          "status_code": { "type": "keyword" },
-          "endpoint": { "type": "keyword" },
-          "remote_addr": { "type": "ip" },
-          "message": { "type": "text" },
-          "log": {
-            "properties": {
-              "file": {
-                "properties": {
-                  "path": { "type": "keyword" }
-                }
+  "index_patterns": ["api-server-*-logs-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "status_code": { "type": "keyword" },
+        "endpoint":     { "type": "keyword" },
+        "remote_addr":  { "type": "ip" },
+        "message":      { "type": "text" },
+        "log": {
+          "properties": {
+            "file": {
+              "properties": {
+                "path": { "type": "keyword" }
               }
             }
           }
@@ -25,4 +24,4 @@
       }
     }
   }
-  
+}
