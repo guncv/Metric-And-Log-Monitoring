@@ -61,22 +61,43 @@ A real-time observability stack for structured logs and metri across **multiple 
 
 ## ✅ Getting Started
 
+### clone my repository
+
 ```bash
-git clone <this-repo>
+git clone https://github.com/guncv/Metric-And-Log-Monitoring.git
 ```
 
+### removes & rebuilds entire monitoring stack
+
 ```
-make rebuild  # removes & rebuilds entire monitoring stack
+make rebuild 
 ```
 
-You’ll get:
+### You’ll get:
 
-![image](https://github.com/user-attachments/assets/9320956b-1a9c-41d8-b482-c997846f52e1)
-## Live structured logs per app in Kibana
+<p align="center">
+  <img src="https://raw.githubusercontent.com/your-repo-path/overview.png" width="600"/>
+</p>
 
+---
 
-![image](https://github.com/user-attachments/assets/4798ff32-6119-4fce-8cca-5f991638c85e)
-## Multi-app metric dashboards in Grafana
+<p align="center"><strong>Real-time Monitoring Stack for Multiple Services</strong></p>
+
+---
+
+### 📊 Live Structured Logs per App in Kibana
+
+<p align="center">
+  <img src="docs/kibana-logs.png" width="750"/>
+</p>
+
+---
+
+### 📈 Multi-App Metrics Dashboard in Grafana
+
+<p align="center">
+  <img src="docs/grafana-dashboard.png" width="750"/>
+</p>
 
 ---
 
