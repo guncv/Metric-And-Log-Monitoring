@@ -10,8 +10,6 @@ services:
     ports:
       - "5001:5001"
       - "8001:8001"
-    volumes:
-      - ./log_collections/logs:/app/logs
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5001/"]
       interval: 30s
@@ -26,8 +24,6 @@ services:
     ports:
       - "5002:5002"
       - "8002:8002"
-    volumes:
-      - ./log_collections/logs:/app/logs
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5002/"]
       interval: 30s
@@ -42,8 +38,6 @@ services:
     ports:
       - "5003:5003"
       - "8003:8003"
-    volumes:
-      - ./log_collections/logs:/app/logs
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5003/"]
       interval: 30s
@@ -126,12 +120,13 @@ services:
 
   fluent-bit:
     image: fluent/fluent-bit:latest
+    ports:
+      - "24224:24224"
     depends_on:
       - elasticsearch
     volumes:
       - ./log_collections/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
       - ./log_collections/parsers.conf:/fluent-bit/etc/parsers.conf
-      - ./log_collections/logs:/fluent-bit/logs
     command: ["fluent-bit", "-c", "/fluent-bit/etc/fluent-bit.conf"]
     restart: unless-stopped
   
@@ -143,11 +138,27 @@ services:
       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
     depends_on:
       - elasticsearch
+    restart: unless-stopped
+
+  kibana-index-pattern-loader:
+    image: curlimages/curl
+    depends_on:
+      - kibana
+    volumes:
+      - ./create_index_pattern.sh:/create_index_pattern.sh
+    entrypoint: ["sh", "/create_index_pattern.sh"]
+    restart: "no"
+
+  kibana-loader:
+    image: curlimages/curl
+    depends_on:
+      - kibana
     volumes:
       - ./log_collections/kibana.ndjson:/tmp/kibana.ndjson
       - ./log_collections/init_kibana.sh:/init_kibana.sh
     entrypoint: ["sh", "/init_kibana.sh"]
-    restart: unless-stopped
+    restart: "no"
+
 
 volumes:
   grafana-storage:

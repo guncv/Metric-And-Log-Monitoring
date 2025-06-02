@@ -3,18 +3,24 @@ import time
 import logging
 import random
 from prometheus_client import start_http_server, Counter, Histogram
+from fluent import handler as fluent_handler
 from pythonjsonlogger import jsonlogger
 
 app = Flask(__name__)
 
-# 🔧 Structured JSON Logging
-logHandler = logging.StreamHandler()
-formatter = jsonlogger.JsonFormatter(
-    '%(asctime)s %(levelname)s %(name)s %(message)s %(remote_addr)s %(endpoint)s %(status_code)s'
-)
-log_file_handler = logging.FileHandler("/app/logs/app.log")
-log_file_handler.setFormatter(formatter)
-app.logger.addHandler(log_file_handler)
+# 🔧 Fluent Bit TCP Logging
+fluent = fluent_handler.FluentHandler('app.logs', host='fluent-bit', port=24224)
+fluent_formatter = fluent_handler.FluentRecordFormatter({
+    'host': '%(hostname)s',
+    'where': '%(module)s.%(funcName)s',
+    'message': '%(message)s',
+    'level': '%(levelname)s',
+    'remote_addr': '%(remote_addr)s',
+    'endpoint': '%(endpoint)s',
+    'status_code': '%(status_code)s'
+})
+fluent.setFormatter(fluent_formatter)
+app.logger.addHandler(fluent)
 
 app.logger.setLevel(logging.INFO)
 
@@ -47,7 +53,7 @@ def record_metrics(response):
     REQUEST_LATENCY.labels(method, endpoint).observe(resp_time)
     REQUEST_COUNTER.labels(method, endpoint, status).inc()
 
-    # Log structured info
+    # Structured log to Fluent Bit
     app.logger.info(
         f"{method} {endpoint} returned {status}",
         extra={
