@@ -76,16 +76,12 @@ make rebuild
 ### You’ll get:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/your-repo-path/overview.png" width="600"/>
+  <img src="meta/log_visualization.png" width="750"/>
 </p>
 
 ---
 
-<p align="center"><strong>Real-time Monitoring Stack for Multiple Services</strong></p>
-
----
-
-### 📊 Live Structured Logs per App in Kibana
+<p align="center"><strong>📊 Live Structured Logs per App in Kibana</strong></p>
 
 <p align="center">
   <img src="docs/kibana-logs.png" width="750"/>
@@ -93,10 +89,10 @@ make rebuild
 
 ---
 
-### 📈 Multi-App Metrics Dashboard in Grafana
+<p align="center"><strong>📈 Multi-App Metrics Dashboard in Grafana</strong></p>
 
 <p align="center">
-  <img src="docs/grafana-dashboard.png" width="750"/>
+  <img src="meta/metric_visualization.png" width="750"/>
 </p>
 
 ---
