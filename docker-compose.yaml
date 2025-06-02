@@ -112,9 +112,9 @@ services:
     depends_on:
       - elasticsearch
     volumes:
-      - ./log_collections/log-template.json:/log-template.json
-      - ./init_template.sh:/init_template.sh
-    entrypoint: ["sh", "/init_template.sh"]
+      - ./elastic_search/config.json:/elastic_search/config.json
+      - ./init_elastic_search.sh:/init_elastic_search.sh
+    entrypoint: ["sh", "/init_elastic_search.sh"]
     restart: "no"
 
 

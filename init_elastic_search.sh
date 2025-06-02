@@ -8,6 +8,6 @@ done
 echo "🚀 Applying Elasticsearch index template..."
 curl -X PUT "http://elasticsearch:9200/_index_template/log-template" \
      -H "Content-Type: application/json" \
-     --data @/log_collections/log-template.json
+     --data @/elastic_search/config.json
 
 echo "✅ Template applied!"
