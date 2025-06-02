@@ -9,7 +9,7 @@ from pythonjsonlogger import jsonlogger
 app = Flask(__name__)
 
 # 🔧 Fluent Bit TCP Logging
-fluent = fluent_handler.FluentHandler('app.logs', host='fluent-bit', port=24224)
+fluent = fluent_handler.FluentHandler('api-server-3.logs', host='fluent-bit', port=24226)
 fluent_formatter = fluent_handler.FluentRecordFormatter({
     'host': '%(hostname)s',
     'where': '%(module)s.%(funcName)s',
@@ -53,15 +53,6 @@ def record_metrics(response):
     REQUEST_LATENCY.labels(method, endpoint).observe(resp_time)
     REQUEST_COUNTER.labels(method, endpoint, status).inc()
 
-    # Structured log to Fluent Bit
-    app.logger.info(
-        f"{method} {endpoint} returned {status}",
-        extra={
-            "remote_addr": request.remote_addr,
-            "endpoint": endpoint,
-            "status_code": status
-        }
-    )
     return response
 
 # 🟢 Normal Endpoint with Log

@@ -141,13 +141,17 @@ services:
     restart: unless-stopped
 
   kibana-loader:
-    image: curlimages/curl
+    image: alpine:latest
     depends_on:
       - kibana
     volumes:
-      - ./kibana/create_index.json:/kibana/create_index.json
+      - ./kibana/create_index.ndjson:/kibana/create_index.ndjson
       - ./init_kibana.sh:/init_kibana.sh
-    entrypoint: ["sh", "/init_kibana.sh"]
+    entrypoint: >
+      sh -c "
+        apk add --no-cache curl jq &&
+        sh /init_kibana.sh
+      "
     restart: "no"
 
 

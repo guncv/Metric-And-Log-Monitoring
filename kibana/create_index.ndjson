@@ -1,0 +1,5 @@
+{"type":"index-pattern","id":"api-server-1-logs","attributes":{"title":"api-server-1-logs-*","timeFieldName":"@timestamp"}}
+{"type":"index-pattern","id":"api-server-2-logs","attributes":{"title":"api-server-2-logs-*","timeFieldName":"@timestamp"}}
+{"type":"index-pattern","id":"api-server-3-logs","attributes":{"title":"api-server-3-logs-*","timeFieldName":"@timestamp"}}
+
+
