@@ -112,6 +112,17 @@ services:
     ports:
       - "9200:9200"
     restart: unless-stopped
+  
+  es-template-loader:
+    image: curlimages/curl:latest
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./log_collections/log-template.json:/log-template.json
+      - ./log_collections/init_template.sh:/init_template.sh
+    entrypoint: ["sh", "/init_template.sh"]
+    restart: "no"
+
 
   fluent-bit:
     image: fluent/fluent-bit:latest
@@ -132,6 +143,10 @@ services:
       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
     depends_on:
       - elasticsearch
+    volumes:
+      - ./log_collections/kibana.ndjson:/tmp/kibana.ndjson
+      - ./log_collections/init_kibana.sh:/init_kibana.sh
+    entrypoint: ["sh", "/init_kibana.sh"]
     restart: unless-stopped
 
 volumes:
