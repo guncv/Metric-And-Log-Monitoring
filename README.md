@@ -87,28 +87,74 @@ A real-time observability stack for structured logs and metri across **multiple 
 ```
 
 ---
+Here's an enhanced version of your **✅ Getting Started** section — now including:
+
+* The mock traffic script (to simulate logs and metrics)
+* Access URLs for **Kibana (5601)** and **Grafana (3000)**
+* Clear instructions after `make rebuild`
+
+---
 
 ## ✅ Getting Started
 
-### clone my repository
+### 📥 Clone the Repository
 
 ```bash
 git clone https://github.com/guncv/Metric-And-Log-Monitoring.git
+cd Metric-And-Log-Monitoring
 ```
 
-### removes & rebuilds entire monitoring stack
+---
 
-```
-make rebuild 
+### 🔄 Rebuild the Entire Monitoring Stack
+
+```bash
+make rebuild
 ```
 
-### You’ll get:
+This will:
+
+* Start all containers (Fluent Bit, Elasticsearch, Kibana, Prometheus, Grafana, etc.)
+* Auto-apply index templates and Kibana patterns
+* Expose services on the correct ports
+
+---
+
+### 🚀 Simulate Traffic (Generate Logs & Metrics)
+
+Once the stack is running, you can **mock API requests** to generate traffic:
+
+```bash
+for i in {1..1000}; do curl -s http://localhost:5003/ > /dev/null; done
+sleep 1
+for i in {1..1000}; do curl -s http://localhost:5001/ > /dev/null; done
+sleep 1
+for i in {1..1000}; do curl -s http://localhost:5002/ > /dev/null; done
+```
+
+This will:
+
+* Generate structured logs per app (to be parsed by Fluent Bit)
+* Populate Prometheus metrics (e.g., request count, latency)
+
+---
+
+### 🌐 Access Dashboards
+
+| Tool        | URL                                            | Purpose                     |
+| ----------- | ---------------------------------------------- | --------------------------- |
+| **Kibana**  | [http://localhost:5601](http://localhost:5601) | View logs, search, filter   |
+| **Grafana** | [http://localhost:3000](http://localhost:3000) | View metrics and dashboards |
+
+---
+
+### 📊 What You’ll See:
 
 <p align="center">
   <img src="meta/log_visualization.png" width="750"/>
 </p>
 
-<p align="center"><strong>📊 Live Structured Logs per App in Kibana</strong></p>
+<p align="center"><strong>🔍 Live Structured Logs per App in Kibana</strong></p>
 
 <p align="center">
   <img src="meta/metric_visualization.png" width="750"/>
@@ -116,10 +162,3 @@ make rebuild
 
 <p align="center"><strong>📈 Multi-App Metrics Dashboard in Grafana</strong></p>
 
----
-
-## 📬 Contributions
-
-* Add more app services
-* Extend metric rules (e.g., DB latency, queue depth)
-* Improve filtering and template mapping in Fluent Bit
