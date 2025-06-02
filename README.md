@@ -6,39 +6,68 @@ A real-time observability stack for structured logs and metri across **multiple 
 
 ## 🧭 Overview Diagram
 
+<p align="center">
+  <img src="meta/overview_diagram.png" width="750"/>
+</p>
+
 ---
 
 ## 🔧 Components
 
-### 1. **Log Collection**
+### 🔹 **1. Server (Source of Logs and Metrics)**
 
-* **Fluent Bit** is configured with multiple `[INPUT]` ports (24224, 24225, 24226)
-* Each app sends structured logs to Fluent Bit via TCP
-* Logs are parsed, filtered (e.g., removing `_type`, `_score`), and sent to Elasticsearch indices
+* Each server exposes:
 
-### 2. **Storage**
+  * A `/metrics` endpoint (e.g., via Prometheus client in Flask, Node Exporter, etc.)
+  * Structured logs, which are forwarded via the **Fluent Bit forward protocol**
 
-* **Elasticsearch** stores time-series logs in daily indices:
+---
+
+### 🔸 **2. Metric Monitoring Pipeline**
+
+#### 🟠 **Prometheus**
+
+* **Pulls metrics** from each server's `/metrics` endpoint on a scheduled interval
+* Stores time-series data in an internal TSDB (Time Series Database)
+
+#### 🟠 **Grafana**
+
+* **Pulls data** from Prometheus via **PromQL queries**
+* Displays custom dashboards for:
+
+  * HTTP request count and rates
+  * Response time (p95, p99)
+  * CPU, memory, and disk usage
+  * Alert thresholds (visual + AlertManager integration)
+
+---
+
+### 🔸 **3. Log Monitoring Pipeline**
+
+#### 🔵 **Fluent Bit**
+
+* Listens on multiple TCP ports (e.g., `24224`, `24225`, `24226`)
+* **Pulls data** from each port via the **forward protocol**
+* Filters, parses, and structures logs from each server/service
+* **Pushes logs** to **Elasticsearch** using the HTTP API
+
+#### 🔵 **Elasticsearch**
+
+* Stores logs in **daily rotated indices**, such as:
 
   * `api-server-1-logs-*`
   * `api-server-2-logs-*`
   * `api-server-3-logs-*`
+* Supports full-text search and log aggregation
 
-### 3. **Visualization**
+#### 🔵 **Kibana**
 
-* **Kibana** auto-configured with multiple index patterns
-* Provides search, filter, and time-based exploration
+* **Pulls data** from Elasticsearch via dynamic queries
+* Visualizes logs with:
 
-### 4. **Metrics**
-
-* **Prometheus** scrapes `/metrics` from Flask apps
-* **AlertManager** sends email alerts based on thresholds (CPU, memory, disk)
-* **Grafana** provides dashboards with:
-
-  * Server requests
-  * API response codes (2xx, 4xx, 5xx)
-  * Latency p95
-  * System resource usage
+  * Time-based filters
+  * Custom dashboards
+  * Searchable fields per service
 
 ---
 
@@ -86,6 +115,7 @@ make rebuild
 </p>
 
 <p align="center"><strong>📈 Multi-App Metrics Dashboard in Grafana</strong></p>
+
 ---
 
 ## 📬 Contributions
