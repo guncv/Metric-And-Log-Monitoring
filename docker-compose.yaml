@@ -113,7 +113,7 @@ services:
       - elasticsearch
     volumes:
       - ./log_collections/log-template.json:/log-template.json
-      - ./log_collections/init_template.sh:/init_template.sh
+      - ./init_template.sh:/init_template.sh
     entrypoint: ["sh", "/init_template.sh"]
     restart: "no"
 
@@ -140,22 +140,13 @@ services:
       - elasticsearch
     restart: unless-stopped
 
-  kibana-index-pattern-loader:
-    image: curlimages/curl
-    depends_on:
-      - kibana
-    volumes:
-      - ./create_index_pattern.sh:/create_index_pattern.sh
-    entrypoint: ["sh", "/create_index_pattern.sh"]
-    restart: "no"
-
   kibana-loader:
     image: curlimages/curl
     depends_on:
       - kibana
     volumes:
-      - ./log_collections/kibana.ndjson:/tmp/kibana.ndjson
-      - ./log_collections/init_kibana.sh:/init_kibana.sh
+      - ./kibana/create_index.json:/kibana/create_index.json
+      - ./init_kibana.sh:/init_kibana.sh
     entrypoint: ["sh", "/init_kibana.sh"]
     restart: "no"
 

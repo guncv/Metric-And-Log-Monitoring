@@ -1,0 +1,7 @@
+{
+    "attributes": {
+      "title": "api-logs-*",
+      "timeFieldName": "@timestamp"
+    }
+  }
+  

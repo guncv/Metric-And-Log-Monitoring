@@ -1,5 +1,5 @@
 {
-    "index_patterns": ["logstash-*"],
+    "index_patterns": ["api-logs-*"],
     "template": {
       "settings": {
         "number_of_shards": 1,
