@@ -71,11 +71,12 @@ make rebuild  # removes & rebuilds entire monitoring stack
 
 You’ll get:
 
-* Live structured logs per app in Kibana
 ![image](https://github.com/user-attachments/assets/9320956b-1a9c-41d8-b482-c997846f52e1)
+## Live structured logs per app in Kibana
 
-* Multi-app metric dashboards in Grafana
+
 ![image](https://github.com/user-attachments/assets/4798ff32-6119-4fce-8cca-5f991638c85e)
+## Multi-app metric dashboards in Grafana
 
 ---
 
