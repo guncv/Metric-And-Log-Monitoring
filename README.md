@@ -79,15 +79,7 @@ make rebuild
   <img src="meta/log_visualization.png" width="750"/>
 </p>
 
----
-
 <p align="center"><strong>📊 Live Structured Logs per App in Kibana</strong></p>
-
-<p align="center">
-  <img src="docs/kibana-logs.png" width="750"/>
-</p>
-
----
 
 <p align="center"><strong>📈 Multi-App Metrics Dashboard in Grafana</strong></p>
 
